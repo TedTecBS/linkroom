@@ -1,5 +1,4 @@
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore'
-import { db } from '@/integrations/firebase'
+import { db, collection, onSnapshot, orderBy, query } from '@/integrations/firebase'
 import { useEffect, useState } from 'react'
 import type { Job } from '@/types'
 import JobCard from '@/components/JobCard'
