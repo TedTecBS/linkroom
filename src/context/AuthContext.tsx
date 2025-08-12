@@ -1,7 +1,16 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { auth, db, googleProvider } from '@/integrations/firebase'
-import { User, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import {
+  auth,
+  db,
+  googleProvider,
+  type User,
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut,
+  doc,
+  getDoc,
+  setDoc
+} from '@/integrations/firebase'
 import type { Role } from '@/types'
 
 type Profile = { role: Role; tokens?: number } | null

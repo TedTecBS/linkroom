@@ -1,5 +1,4 @@
-import { httpsCallable } from 'firebase/functions'
-import { functions } from '@/integrations/firebase'
+import { functions, httpsCallable } from '@/integrations/firebase'
 import Protected from '@/components/Protected'
 import { useState } from 'react'
 

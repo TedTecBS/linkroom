@@ -1,8 +1,14 @@
-import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore'
-import { db, functions } from '@/integrations/firebase'
+import {
+  db,
+  functions,
+  doc,
+  getDoc,
+  updateDoc,
+  setDoc,
+  httpsCallable
+} from '@/integrations/firebase'
 import { useAuth } from '@/context/AuthContext'
 import Protected from '@/components/Protected'
-import { httpsCallable } from 'firebase/functions'
 import { useEffect, useState } from 'react'
 
 export default function CompanyDashboard() {
