@@ -1,5 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore'
-import { db } from '@/integrations/firebase'
+import { db, doc, getDoc } from '@/integrations/firebase'
 import { useEffect, useState } from 'react'
 import type { Job } from '@/types'
 import { useParams } from 'react-router-dom'
