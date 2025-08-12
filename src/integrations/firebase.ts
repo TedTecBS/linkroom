@@ -1,24 +1,8 @@
 import { initializeApp } from 'firebase/app'
-import {
-  getAuth,
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  signInWithPopup,
-  signOut,
-  type User
-} from 'firebase/auth'
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-  updateDoc
-} from 'firebase/firestore'
-import { getFunctions, httpsCallable } from 'firebase/functions'
+import { getAuth, GoogleAuthProvider } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
+import { getFunctions } from 'firebase/functions'
+import { getAnalytics } from 'firebase/analytics'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -36,20 +20,4 @@ export const auth = getAuth(app)
 export const googleProvider = new GoogleAuthProvider()
 export const db = getFirestore(app)
 export const functions = getFunctions(app)
-
-export {
-  onAuthStateChanged,
-  signInWithPopup,
-  signOut,
-  doc,
-  getDoc,
-  setDoc,
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-  updateDoc,
-  httpsCallable
-}
-
-export type { User }
+export const analytics = getAnalytics(app)
