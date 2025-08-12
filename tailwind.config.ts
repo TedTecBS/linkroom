@@ -11,7 +11,8 @@ export default {
         primary: 'hsl(var(--primary))'
       },
       borderColor: {
-        DEFAULT: 'hsl(var(--border))'
+        DEFAULT: 'hsl(var(--border))',
+        border: 'hsl(var(--border))'
       }
     }
   },
