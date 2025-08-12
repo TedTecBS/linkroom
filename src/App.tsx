@@ -1,27 +1,14 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AuthProvider } from './contexts/AuthContext'
-import JobsList from './routes/JobsList'
-import JobDetail from './routes/JobDetail'
-import AdminPostJob from './routes/admin/PostJob'
-import EmployerPostJob from './routes/employer/PostJob'
+import { Outlet } from 'react-router-dom'
+import Header from './components/Header'
 
-const queryClient = new QueryClient()
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<JobsList />} />
-          <Route path="/jobs" element={<JobsList />} />
-          <Route path="/jobs/:id" element={<JobDetail />} />
-          <Route path="/admin/post-job" element={<AdminPostJob />} />
-          <Route path="/employer/post-job" element={<EmployerPostJob />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  </QueryClientProvider>
-)
-
-export default App
+export default function App() {
+  return (
+    <div className="min-h-dvh flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+      <footer className="border-t p-4 text-center text-sm text-gray-600">© {new Date().getFullYear()} Linkroom</footer>
+    </div>
+  )
+}
