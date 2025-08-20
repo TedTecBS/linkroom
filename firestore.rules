@@ -1,40 +1,14 @@
-// Users: /users/{uid}
-//  - role: "admin" | "company" | "user"
-//  - tokens: number (for companies)
-// Jobs: /jobs/{jobId}
-//  - title, description, companyName, createdBy, isAdminPost (boolean), createdAt
-
 rules_version = '2';
 service cloud.firestore {
-  match /databases/{database}/documents {
-
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function userDoc() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid));
-    }
-
-    function isAdmin() {
-      return isSignedIn() && userDoc().data.role == "admin";
-    }
-
-    function isCompany() {
-      return isSignedIn() && userDoc().data.role == "company";
-    }
-
-    // Users can read their own profile; admins can read all
-    match /users/{uid} {
-      allow read: if isAdmin() || (isSignedIn() && request.auth.uid == uid);
-      allow write: if isAdmin() || (isSignedIn() && request.auth.uid == uid);
-    }
-
+  match /databases/{db}/documents {
     match /jobs/{jobId} {
       allow read: if true;
-
-      // Writes only via Cloud Functions (enforce ad rules & tokens)
-      allow create, update, delete: if false;
+      allow write: if false;
+    }
+    match /{document=**} {
+      allow read: if true;
+      allow write: if false;
     }
   }
 }
+
