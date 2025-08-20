@@ -21,3 +21,21 @@ export const googleProvider = new GoogleAuthProvider()
 export const db = getFirestore(app)
 export const functions = getFunctions(app)
 export const analytics = getAnalytics(app)
+
+export {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+  limit,
+  updateDoc,
+  setDoc,
+  startAfter
+} from 'firebase/firestore'
+
+export { httpsCallable } from 'firebase/functions'
+export { onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth'
