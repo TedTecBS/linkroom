@@ -1,4 +1,4 @@
-import AdSenseBlock from './AdSense'
+import AdSlot from './AdSlot'
 import type { Job } from '@/types'
 export default function JobCard({ job }: { job: Job }) {
   return (
@@ -7,7 +7,7 @@ export default function JobCard({ job }: { job: Job }) {
       <p className="text-sm text-gray-600">{job.companyName}</p>
       <p className="mt-2 whitespace-pre-wrap">{job.description}</p>
       {/* Show ads ONLY for admin posts */}
-      {job.isAdminPost && <AdSenseBlock />}
+      {job.isAdminPost && <AdSlot slot="YOUR_SLOT_ID_HERE" />}
     </article>
   )
 }
