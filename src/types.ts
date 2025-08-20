@@ -8,4 +8,6 @@ export type Job = {
   isAdminPost: boolean
   createdBy: string
   createdAt?: { seconds: number; nanoseconds: number } | null
+  status?: string
+  postedAt?: { seconds: number; nanoseconds: number } | null
 }
