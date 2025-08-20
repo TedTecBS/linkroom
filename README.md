@@ -29,6 +29,18 @@ Minimal React + Firebase jobs board with conditional AdSense rendering.
    - Admin jobs show AdSense blocks on detail page.
    - Employer jobs never render ads and decrement tokens.
 
+## Ad slots
+
+Use the `AdSlot` component to render individual ad units. Specify the AdSense slot ID for each location where an ad should appear:
+
+```tsx
+import AdSlot from './components/AdSlot'
+
+<AdSlot slot="YOUR_SLOT_ID_HERE" />
+```
+
+Replace `YOUR_SLOT_ID_HERE` with the slot ID for the ad unit.
+
 ## Tests
 ```
 npm test

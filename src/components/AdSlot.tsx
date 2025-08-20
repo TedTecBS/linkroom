@@ -1,6 +1,12 @@
 import { useEffect, useRef } from 'react'
 
-export default function AdSenseBlock() {
+interface AdSlotProps {
+  slot: string
+  format?: string
+  layout?: string
+}
+
+export default function AdSlot({ slot, format = 'auto', layout }: AdSlotProps) {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -15,8 +21,9 @@ export default function AdSenseBlock() {
       className="adsbygoogle block my-4"
       style={{ display: 'block' }}
       data-ad-client={import.meta.env.VITE_GOOGLE_ADSENSE_CLIENT}
-      data-ad-slot="1234567890"
-      data-ad-format="auto"
+      data-ad-slot={slot}
+      data-ad-format={format}
+      data-ad-layout={layout}
       data-full-width-responsive="true"
       ref={ref as any}
     />
