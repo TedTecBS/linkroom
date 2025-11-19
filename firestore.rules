@@ -1,0 +1,184 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isUser(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function hasRole(role) {
+      return isAuthenticated() && getUserData().role == role;
+    }
+    
+    function isAdmin() {
+      return hasRole('admin');
+    }
+    
+    function isEmployer() {
+      return hasRole('employer');
+    }
+    
+    function isJobSeeker() {
+      return hasRole('job_seeker');
+    }
+    
+    function isActive() {
+      return isAuthenticated() && getUserData().status == 'active';
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Anyone can read active user profiles (for public profiles)
+      allow read: if isAuthenticated();
+      
+      // Users can only create their own profile during sign up
+      allow create: if isUser(userId) && request.resource.data.status == 'active';
+      
+      // Users can only update their own profile, admins can update any
+      allow update: if (isUser(userId) || isAdmin()) && isActive();
+      
+      // Only admins can delete users
+      allow delete: if isAdmin();
+    }
+    
+    // Job Seeker Profiles
+    match /job_seeker_profiles/{profileId} {
+      // Public profiles can be read by authenticated users
+      allow read: if isAuthenticated() && (
+        resource.data.visibility == 'public' || 
+        isUser(resource.data.userId) ||
+        isAdmin()
+      );
+      
+      // Job seekers can create their own profile
+      allow create: if isUser(request.resource.data.userId) && isJobSeeker();
+      
+      // Job seekers can only update their own profile
+      allow update: if isUser(resource.data.userId) && isJobSeeker();
+      
+      // Only admins can delete profiles
+      allow delete: if isAdmin();
+    }
+    
+    // Organisations
+    match /organisations/{orgId} {
+      // Anyone authenticated can read active organisations
+      allow read: if isAuthenticated() && resource.data.status == 'active';
+      
+      // Employers can create organisations
+      allow create: if isEmployer() && 
+                      request.resource.data.ownerUserId == request.auth.uid &&
+                      request.resource.data.status == 'active';
+      
+      // Organisation owners and admins can update
+      allow update: if (isUser(resource.data.ownerUserId) || isAdmin()) && isActive();
+      
+      // Only admins can delete organisations
+      allow delete: if isAdmin();
+    }
+    
+    // Jobs
+    match /jobs/{jobId} {
+      // Published jobs are readable by everyone authenticated
+      allow read: if isAuthenticated() && (
+        resource.data.status == 'published' ||
+        isUser(resource.data.createdByUserId) ||
+        isAdmin()
+      );
+      
+      // Employers can create jobs for their organisation
+      allow create: if isEmployer() && 
+                      isUser(request.resource.data.createdByUserId) &&
+                      isActive();
+      
+      // Job creator or admin can update
+      allow update: if (isUser(resource.data.createdByUserId) || isAdmin()) && isActive();
+      
+      // Job creator or admin can delete
+      allow delete: if isUser(resource.data.createdByUserId) || isAdmin();
+    }
+    
+    // Applications
+    match /applications/{applicationId} {
+      // Applicant, employer of job, and admins can read
+      allow read: if isAuthenticated() && (
+        isUser(resource.data.applicantUserId) ||
+        get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.createdByUserId == request.auth.uid ||
+        isAdmin()
+      );
+      
+      // Job seekers can create applications
+      allow create: if isJobSeeker() &&
+                      isUser(request.resource.data.applicantUserId) &&
+                      request.resource.data.status == 'submitted' &&
+                      isActive();
+      
+      // Employers can update application status
+      allow update: if (
+        get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.createdByUserId == request.auth.uid ||
+        isAdmin()
+      ) && isActive();
+      
+      // Only admins can delete applications
+      allow delete: if isAdmin();
+    }
+    
+    // Plans (read-only for most users)
+    match /plans/{planId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Subscriptions
+    match /subscriptions/{subscriptionId} {
+      // Users can read their own subscriptions, admins can read all
+      allow read: if isAuthenticated() && (
+        isUser(resource.data.userId) ||
+        isAdmin()
+      );
+      
+      // Only Cloud Functions and admins can write subscriptions
+      allow write: if isAdmin();
+    }
+    
+    // Job Alerts
+    match /alerts/{alertId} {
+      // Users can only read their own alerts
+      allow read: if isUser(resource.data.userId);
+      
+      // Users can create and update their own alerts
+      allow create: if isUser(request.resource.data.userId) && isJobSeeker();
+      allow update: if isUser(resource.data.userId) && isJobSeeker();
+      
+      // Users can delete their own alerts
+      allow delete: if isUser(resource.data.userId) || isAdmin();
+    }
+    
+    // Saved Jobs
+    match /saved_jobs/{savedJobId} {
+      // Users can only read their own saved jobs
+      allow read: if isUser(resource.data.userId);
+      
+      // Job seekers can save jobs
+      allow create: if isUser(request.resource.data.userId) && isJobSeeker();
+      
+      // Users can delete their own saved jobs
+      allow delete: if isUser(resource.data.userId);
+    }
+    
+    // Admin Logs (admin only)
+    match /admin_logs/{logId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+  }
+}
